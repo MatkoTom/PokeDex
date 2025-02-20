@@ -4,7 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,15 +24,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil3.compose.AsyncImage
 import com.tomljanovic.matko.pokedex.domain.model.Pokemon
 import com.tomljanovic.matko.pokedex.presentation.PokeDexViewModel
 import com.tomljanovic.matko.pokedex.ui.theme.PokeDexTheme
+import com.tomljanovic.matko.pokedex.util.Tools
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -73,7 +79,7 @@ fun PokedexGrid(pokemon: List<Pokemon>) {
         columns = GridCells.Adaptive(minSize = 128.dp)
     ) {
         items(pokemon) { poke ->
-            PokedexItem(poke.name)
+            PokedexItem(poke)
         }
     }
 }
@@ -83,38 +89,94 @@ fun PokedexGrid(pokemon: List<Pokemon>) {
 fun PokedexGridPreview() {
     PokedexGrid(
         pokemon = listOf(
-            Pokemon(name = "Bulbasaur"),
-            Pokemon(name = "Ivysaur"),
-            Pokemon(name = "Venusaur"),
-            Pokemon(name = "Charmander"),
-            Pokemon(name = "Charmeleon"),
-            Pokemon(name = "Charizard"),
-            Pokemon(name = "Squirtle"),
-            Pokemon(name = "Wartortle"),
+            Pokemon(
+                id = 1,
+                name = "Bulbasaur",
+                stats = emptyMap(),
+                types = listOf("grass", "poison"),
+                sprite = ""
+            ),
+            Pokemon(
+                id = 2,
+                name = "Ivysaur",
+                stats = emptyMap(),
+                types = listOf("grass", "poison"),
+                sprite = ""
+            ),
+            Pokemon(
+                id = 3,
+                name = "Venusaur",
+                stats = emptyMap(),
+                types = listOf("grass", "poison"),
+                sprite = ""
+            ),
+            Pokemon(
+                id = 4,
+                name = "Charmander",
+                stats = emptyMap(),
+                types = listOf("fire"),
+                sprite = ""
+            ),
+            Pokemon(
+                id = 5,
+                name = "Charmeleon",
+                stats = emptyMap(),
+                types = listOf("fire"),
+                sprite = ""
+            ),
+            Pokemon(
+                id = 6,
+                name = "Charizard",
+                stats = emptyMap(),
+                types = listOf("fire", "flying"),
+                sprite = ""
+            ),
+            Pokemon(
+                id = 7,
+                name = "Squirtle",
+                stats = emptyMap(),
+                types = listOf("water"),
+                sprite = ""
+            )
         )
     )
 }
 
 @Composable
-fun PokedexItem(name: String) {
+fun PokedexItem(pokemon: Pokemon) {
+    val cardColours = if (pokemon.types.size == 1) {
+        listOf(Tools.typeColor(pokemon.types)[0], Tools.typeColor(pokemon.types)[0])
+    } else Tools.typeColor(pokemon.types)
+
+    val capitalizedText = pokemon.name.replaceFirstChar { it.uppercase() }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(all = 8.dp)
-            .size(size = 64.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.Yellow)
+            .size(size = 128.dp)
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = cardColours
+                )
+            ),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
-        Box(
+        Column (
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            contentAlignment = Alignment.Center
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            val capitalizedText = name.replaceFirstChar { it.uppercase() }
+            AsyncImage(
+                model = pokemon.sprite,
+                contentDescription = null,
+            )
 
             Text(
                 text = capitalizedText,
-                color = Color.Black,
+                color = Color.White,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
                 fontSize = 12.sp
@@ -126,5 +188,13 @@ fun PokedexItem(name: String) {
 @Preview
 @Composable
 fun PokedexItemPreview() {
-    PokedexItem(name = "Bulbasaur")
+    PokedexItem(
+        Pokemon(
+            id = 1,
+            name = "Bulbasaur",
+            stats = emptyMap(),
+            types = listOf("grass", "poison"),
+            sprite = "https://raw.githubuserco…r/official-artwork/1.png"
+        )
+    )
 }

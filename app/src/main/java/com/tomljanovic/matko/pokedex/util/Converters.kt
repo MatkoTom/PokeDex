@@ -15,4 +15,15 @@ class Converters {
     fun toStringList(data: String): List<String> {
         return Gson().fromJson(data, object : TypeToken<List<String>>() {}.type)
     }
+
+    @TypeConverter
+    fun fromStatsMap(stats: Map<String, Int>): String {
+        return Gson().toJson(stats)
+    }
+
+    @TypeConverter
+    fun toStatsMap(statsString: String): Map<String, Int> {
+        val listType = object : TypeToken<Map<String, Int>>() {}.type
+        return Gson().fromJson(statsString, listType)
+    }
 }

@@ -21,7 +21,7 @@ class PokeDexViewModel @Inject constructor(
         numberOfPokemon: Int,
         fetchFromRemote: Boolean = false
     ) = viewModelScope.launch {
-        repository.getPokemon(numberOfPokemon, fetchFromRemote).collect { result ->
+        repository.getPokemonList(numberOfPokemon, fetchFromRemote).collect { result ->
             when (result) {
                 is Resource.Success -> {
                     result.data?.let {

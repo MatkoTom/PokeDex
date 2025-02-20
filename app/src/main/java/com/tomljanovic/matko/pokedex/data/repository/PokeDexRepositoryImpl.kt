@@ -9,6 +9,7 @@ import com.tomljanovic.matko.pokedex.domain.repository.PokeDexRepository
 import com.tomljanovic.matko.pokedex.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
 import timber.log.Timber
 import java.io.IOException
@@ -22,7 +23,7 @@ class PokeDexRepositoryImpl @Inject constructor(
 ) : PokeDexRepository {
     private val pokedexDao = pokedexDb.dao
 
-    override fun getPokemon(limit: Int, isFromRemote: Boolean): Flow<Resource<List<Pokemon>>> {
+    override fun getPokemonList(limit: Int, isFromRemote: Boolean): Flow<Resource<List<Pokemon>>> {
         return flow {
             emit(Resource.Loading(isLoading = true))
 
@@ -37,7 +38,7 @@ class PokeDexRepositoryImpl @Inject constructor(
             }
 
             val remotePokemon = try {
-                pokeDexApi.getPokemon(limit).results
+                pokeDexApi.getListOfPokemon(limit).results
             } catch (e: HttpException) {
                 Timber.e("Fetch error: ${e.message}")
                 emit(Resource.Error(message = "Unable to load data remote"))
@@ -49,11 +50,30 @@ class PokeDexRepositoryImpl @Inject constructor(
             }
 
             remotePokemon?.let { pokemon ->
-                pokedexDao.clearPokemon()
-                pokedexDao.insertPokemon(pokemon.map { it.toPokemonEntity() })
+                runBlocking {
+                    pokemon.forEach {
+                        getSpecificPokemon(it.name)
+                    }
+                }
                 emit(Resource.Success(data = pokedexDao.getLocalPokemon().map { it.toPokemon() }))
             }
             emit(Resource.Loading(isLoading = false))
+        }
+    }
+
+    private suspend fun getSpecificPokemon(name: String) {
+        val remotePokemon = try {
+            pokeDexApi.getPokemonById(name)
+        } catch (e: HttpException) {
+            Timber.e("Fetch error: ${e.message}")
+            null
+        } catch (e: IOException) {
+            Timber.e("Fetch error local: ${e.message}")
+            null
+        }
+        remotePokemon?.let { pokemon ->
+            pokedexDao.deletePokemon(pokemon.id)
+            pokedexDao.insertPokemon(pokemon.toPokemonEntity())
         }
     }
 }

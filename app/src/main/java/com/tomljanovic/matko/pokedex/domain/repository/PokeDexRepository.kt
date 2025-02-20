@@ -5,5 +5,5 @@ import com.tomljanovic.matko.pokedex.util.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface PokeDexRepository {
-    fun getPokemon(limit: Int, isFromRemote: Boolean): Flow<Resource<List<Pokemon>>>
+    fun getPokemonList(limit: Int, isFromRemote: Boolean): Flow<Resource<List<Pokemon>>>
 }

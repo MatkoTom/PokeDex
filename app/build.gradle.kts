@@ -93,4 +93,8 @@ dependencies {
 
     // Fonts
     implementation(libs.fonts)
+
+    // Coil - Image Loading
+    implementation(libs.coil)
+    implementation(libs.coil.networking)
 }
