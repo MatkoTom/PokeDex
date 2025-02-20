@@ -65,9 +65,8 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.accompanist.swiperefresh)
 
-    // Compose Nav Destinations
-    implementation(libs.core)
-    ksp(libs.ksp)
+    // Compose Navigation
+    implementation(libs.androidx.navigation.compose)
 
     //Dagger - Hilt
     implementation(libs.hilt.android)
