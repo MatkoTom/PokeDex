@@ -4,28 +4,32 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,19 +44,34 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             PokeDexTheme {
                 Scaffold(
+                    topBar = {
+                        TopAppBar(
+                            title = {
+                                Image(
+                                  painter = painterResource(id = R.drawable.pokemon_logo),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Fit,
+                                    modifier = Modifier.size(size = 128.dp)
+                                )
+                            },
+                            colors = TopAppBarDefaults.topAppBarColors(
+                                containerColor = Color.Transparent
+                            )
+                        )
+                    },
                     modifier = Modifier
                         .fillMaxSize()
-                        .systemBarsPadding()
                 ) { innerPadding ->
-                    Pokedex(
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    Column(modifier = Modifier.padding(innerPadding)) {
+                        Pokedex()
+                    }
                 }
             }
         }
@@ -65,7 +84,7 @@ fun Pokedex(
     viewModel: PokeDexViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = Unit) {
-        viewModel.getPokeDexEntries(10)
+        viewModel.getPokeDexEntries(30)
     }
 
     val state = viewModel.pokeDexState
@@ -153,19 +172,19 @@ fun PokedexItem(pokemon: Pokemon) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(all = 8.dp)
-            .size(size = 128.dp)
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = cardColours
-                )
-            ),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+            .padding(all = 4.dp)
+            .size(size = 156.dp),
+        shape = RoundedCornerShape(size = 8.dp)
     ) {
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = cardColours
+                    )
+                )
+                .padding(all = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
