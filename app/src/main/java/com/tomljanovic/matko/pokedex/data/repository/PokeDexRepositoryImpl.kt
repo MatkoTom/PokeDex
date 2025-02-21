@@ -7,6 +7,10 @@ import com.tomljanovic.matko.pokedex.data.remote.PokeDexApi
 import com.tomljanovic.matko.pokedex.domain.model.Pokemon
 import com.tomljanovic.matko.pokedex.domain.repository.PokeDexRepository
 import com.tomljanovic.matko.pokedex.util.Resource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
@@ -50,10 +54,13 @@ class PokeDexRepositoryImpl @Inject constructor(
             }
 
             remotePokemon?.let { pokemon ->
-                runBlocking {
-                    pokemon.forEach {
-                        getSpecificPokemon(it.name)
+                coroutineScope {
+                    val deferredResults = pokemon.map {
+                       async(Dispatchers.IO) {
+                            getSpecificPokemon(it.name)
+                        }
                     }
+                    deferredResults.awaitAll()
                 }
                 emit(Resource.Success(data = pokedexDao.getLocalPokemon().map { it.toPokemon() }))
             }
