@@ -1,5 +1,7 @@
 package com.tomljanovic.matko.pokedex.presentation.details
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,11 +16,17 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -33,7 +41,6 @@ import com.tomljanovic.matko.pokedex.util.Tools
 
 @Composable
 fun PokemonDetailsScreen(
-    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PokeDexViewModel
 ) {
@@ -162,26 +169,34 @@ fun PokemonInformationPreview() {
 
 @Composable
 fun StatsContainer(modifier: Modifier = Modifier, name: String, value: Int) {
+    var isAnimationStarted by remember {
+        mutableStateOf(false)
+    }
+    val animatedProgress by animateFloatAsState(
+        targetValue = if (isAnimationStarted)
+         value.toFloat() / 255.0f else 0f,
+        animationSpec = tween(durationMillis = 1000)
+    )
+
+    LaunchedEffect(key1 = true) {
+        isAnimationStarted = true
+    }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(all = 8.dp),
+            .padding(all = 8.dp)
+            .drawBehind {
+              drawRoundRect(
+                  color = Color.White,
+                  cornerRadius = CornerRadius(24.dp.toPx(), 24.dp.toPx())
+              )
+            },
         contentAlignment = Alignment.Center
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .size(width = 128.dp, height = 24.dp)
-                .clip(
-                    RoundedCornerShape(size = 24.dp)
-                )
-                .background(Color.White)
-        ) {
-            // ignore
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth((value.toDouble() / 255.0).toFloat())
+                .fillMaxWidth(animatedProgress)
                 .size(width = 128.dp, height = 24.dp)
                 .clip(
                     RoundedCornerShape(size = 24.dp)
@@ -193,7 +208,7 @@ fun StatsContainer(modifier: Modifier = Modifier, name: String, value: Int) {
         }
         Text(
             modifier = Modifier
-                .fillMaxWidth((value.toDouble() / 255.0).toFloat() + 0.14f)
+                .fillMaxWidth(animatedProgress + 0.14f)
                 .padding(end = 8.dp)
                 .align(Alignment.CenterStart),
             textAlign = TextAlign.End,

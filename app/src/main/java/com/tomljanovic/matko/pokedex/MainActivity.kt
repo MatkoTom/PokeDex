@@ -146,9 +146,6 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = PokemonListNav.Details.name) {
                             PokemonDetailsScreen(
-                                onBackClick = {
-                                    navController.popBackStack()
-                                },
                                 viewModel = viewModel
                             )
                         }
