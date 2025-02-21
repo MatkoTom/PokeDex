@@ -19,6 +19,9 @@ interface PokemonDao {
     @Query("DELETE FROM pokemonentity WHERE id = :id")
     suspend fun deletePokemon(id: Int)
 
+    @Query("SELECT MAX(id) FROM pokemonentity")
+    suspend fun getMaxPokemonId(): Int?
+
     @Query("DELETE FROM pokemonentity")
     suspend fun clearPokemon()
 }

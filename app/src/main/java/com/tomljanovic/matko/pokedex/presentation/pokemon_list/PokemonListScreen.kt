@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -18,7 +20,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -27,9 +31,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.tomljanovic.matko.pokedex.domain.model.Pokemon
 import com.tomljanovic.matko.pokedex.util.Tools
+import timber.log.Timber
 
 @Composable
 fun PokemonListScreen(
@@ -43,30 +49,43 @@ fun PokemonListScreen(
 
     val state by viewModel.pokeDexState.collectAsState()
 
-    if (state.isLoading) {
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .background(color = Color.Black.copy(alpha = 0.3f)),
-            contentAlignment = Alignment.Center
-        ) {
+    Box(modifier = modifier.fillMaxSize()) {
+        PokedexGrid(pokemon = state.pokemonList, onPokemonClick, viewModel)
 
-            CircularProgressIndicator(
-                color = Color.White,
-                strokeWidth = 4.dp
-            )
+        if (state.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color.Black.copy(alpha = 0.3f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    color = Color.White,
+                    strokeWidth = 4.dp
+                )
+            }
         }
     }
-    PokedexGrid(pokemon = state.pokemonList, onPokemonClick)
 }
 
 @Composable
 fun PokedexGrid(
     pokemon: List<Pokemon>,
-    onPokemonClick: (Pokemon) -> Unit = {}
+    onPokemonClick: (Pokemon) -> Unit = {},
+    viewModel: PokeDexViewModel = hiltViewModel()
 ) {
+    val scrollState = rememberLazyGridState()
+    val endReached = checkIfLastItemIsVisible(scrollState)
+
+    if (endReached) {
+        LaunchedEffect(key1 = Unit) {
+            Timber.d("Scroll end reached")
+            viewModel.getNextSetOfPokemon(limit = 30)
+        }
+    }
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 128.dp)
+        columns = GridCells.Adaptive(minSize = 128.dp),
+        state = scrollState
     ) {
         items(pokemon) { poke ->
             PokedexItem(
@@ -75,6 +94,20 @@ fun PokedexGrid(
             )
         }
     }
+}
+
+@Composable
+fun checkIfLastItemIsVisible(scrollState: LazyGridState): Boolean {
+    val endReached by remember {
+        derivedStateOf {
+            val layoutInfo = scrollState.layoutInfo
+            val totalItemsNumber = layoutInfo.totalItemsCount
+            val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0)
+
+            lastVisibleItemIndex >= totalItemsNumber - 1 && totalItemsNumber > 0
+        }
+    }
+    return endReached
 }
 
 @Preview

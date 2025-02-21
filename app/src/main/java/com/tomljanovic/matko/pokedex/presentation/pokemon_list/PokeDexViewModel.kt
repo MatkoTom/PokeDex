@@ -57,6 +57,41 @@ class PokeDexViewModel @Inject constructor(
         }
     }
 
+    fun getNextSetOfPokemon(limit: Int) = viewModelScope.launch {
+        repository.getNextPage(limit).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    result.data?.let { pokemonList ->
+                        _pokeDexState.update {
+                            it.copy(
+                                pokemonList = pokemonList
+                            )
+                        }
+                    }
+                }
+
+                is Resource.Error -> {
+                    result.message?.let { error ->
+                        _pokeDexState.update {
+                            it.copy(
+                                error = error
+                            )
+                        }
+                    }
+                }
+
+                is Resource.Loading -> {
+                    _pokeDexState.update {
+                        it.copy(
+                            isLoading = result.isLoading
+                        )
+                    }
+                }
+            }
+
+        }
+    }
+
     fun updatePokemonSelected(pokemon: Pokemon) {
         _pokeDexState.update {
             it.copy(

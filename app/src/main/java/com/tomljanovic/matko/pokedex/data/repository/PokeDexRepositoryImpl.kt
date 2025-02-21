@@ -13,7 +13,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
 import timber.log.Timber
 import java.io.IOException
@@ -56,8 +55,29 @@ class PokeDexRepositoryImpl @Inject constructor(
             remotePokemon?.let { pokemon ->
                 coroutineScope {
                     val deferredResults = pokemon.map {
-                       async(Dispatchers.IO) {
+                        async(Dispatchers.IO) {
                             getSpecificPokemon(it.name)
+                        }
+                    }
+                    deferredResults.awaitAll()
+                }
+                emit(Resource.Success(data = pokedexDao.getLocalPokemon().map { it.toPokemon() }))
+            }
+            emit(Resource.Loading(isLoading = false))
+        }
+    }
+
+    override fun getNextPage(limit: Int): Flow<Resource<List<Pokemon>>> {
+        return flow {
+            emit(Resource.Loading(true))
+
+            val lastPokemonInDb = pokedexDao.getMaxPokemonId()
+
+            lastPokemonInDb?.let { id ->
+                coroutineScope {
+                    val deferredResults = (id + 1..id + limit).map {
+                        async(Dispatchers.IO) {
+                            getSpecificPokemon(it.toString())
                         }
                     }
                     deferredResults.awaitAll()

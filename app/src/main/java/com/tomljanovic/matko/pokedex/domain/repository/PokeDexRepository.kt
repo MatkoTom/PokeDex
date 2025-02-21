@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface PokeDexRepository {
     fun getPokemonList(limit: Int, isFromRemote: Boolean): Flow<Resource<List<Pokemon>>>
+    fun getNextPage(limit: Int): Flow<Resource<List<Pokemon>>>
 }
