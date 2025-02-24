@@ -83,6 +83,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 ) {
                                     Icon(
+                                        tint = Color.White,
                                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                         contentDescription = "Back"
                                     )
@@ -107,7 +108,8 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.size(size = 128.dp)
                                     )
                                 } else {
-                                    Text(text = topAppBarState.title)
+                                    Text(color = Color.White,
+                                        text = topAppBarState.title)
                                 }
                             },
                             navigationIcon = { topAppBarState.navigationIcon?.invoke() },
@@ -135,6 +137,7 @@ class MainActivity : ComponentActivity() {
                                                     text = Tools.formatNumber(it.id),
                                                     modifier = Modifier.padding(end = 16.dp),
                                                     fontWeight = FontWeight.Bold,
+                                                    color = Color.White,
                                                     style = MaterialTheme.typography.titleLarge
                                                 )
                                             })

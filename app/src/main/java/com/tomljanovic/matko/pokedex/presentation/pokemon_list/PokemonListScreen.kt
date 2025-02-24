@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,7 +45,7 @@ fun PokemonListScreen(
     viewModel: PokeDexViewModel
 ) {
     LaunchedEffect(key1 = Unit) {
-        viewModel.getPokeDexEntries(151)
+        viewModel.getPokeDexEntries(20)
     }
 
     val state by viewModel.pokeDexState.collectAsState()
@@ -200,14 +201,17 @@ fun PokedexItem(
             verticalArrangement = Arrangement.Center
         ) {
             AsyncImage(
+                modifier = Modifier.weight(1f),
                 model = pokemon.sprite,
                 contentDescription = null,
             )
 
             Text(
+                modifier = Modifier.fillMaxWidth(),
                 text = capitalizedText,
                 color = Color.White,
                 textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 fontSize = 12.sp
             )
