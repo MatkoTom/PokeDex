@@ -7,12 +7,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,16 +25,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
+import com.tomljanovic.matko.pokedex.R
 import com.tomljanovic.matko.pokedex.domain.model.Pokemon
-import com.tomljanovic.matko.pokedex.presentation.pokemon_list.PokeDexViewModel
+import com.tomljanovic.matko.pokedex.presentation.PokeDexViewModel
+import com.tomljanovic.matko.pokedex.presentation.components.cards.PokemonImageCard
 import com.tomljanovic.matko.pokedex.util.Tools
 
 @Composable
@@ -52,54 +51,6 @@ fun PokemonDetailsScreen(
             PokemonInformation(it)
         }
     }
-}
-
-@Composable
-fun PokemonImageCard(pokemon: Pokemon) {
-    val cardColours = if (pokemon.types.size == 1) {
-        listOf(Tools.typeColorList(pokemon.types)[0], Tools.typeColorList(pokemon.types)[0])
-    } else Tools.typeColorList(pokemon.types)
-
-    Column {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.CenterHorizontally)
-                .size(size = 256.dp)
-                .padding(bottom = 24.dp),
-            shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = cardColours
-                        )
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                AsyncImage(
-                    model = pokemon.sprite,
-                    contentDescription = null,
-                    modifier = Modifier.padding(bottom = 24.dp))
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-fun PokemonImageCardPreview() {
-    PokemonImageCard(
-        Pokemon(
-            id = 1,
-            name = "Bulbasaur",
-            stats = emptyMap(),
-            types = listOf("grass", "poison"),
-            sprite = ""
-        )
-    )
 }
 
 @Composable
@@ -123,7 +74,12 @@ fun PokemonInformation(pokemon: Pokemon) {
             }
         }
 
-        Text(text = "Base stats", color = Color.White, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+        Text(
+            text = stringResource(R.string.base_stats),
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleMedium
+        )
 
         Column(modifier = Modifier.fillMaxWidth()) {
             pokemon.stats.forEach { (name, value) ->
@@ -149,24 +105,6 @@ fun PokemonInformation(pokemon: Pokemon) {
     }
 }
 
-@Preview
-@Composable
-fun PokemonInformationPreview() {
-    PokemonInformation(
-        Pokemon(
-            id = 1,
-            name = "Bulbasaur",
-            stats = mapOf(
-                "hp" to 12,
-                "attack" to 162,
-                "defense" to 221
-            ),
-            types = listOf("grass", "poison"),
-            sprite = ""
-        )
-    )
-}
-
 @Composable
 fun StatsContainer(modifier: Modifier = Modifier, name: String, value: Int) {
     var isAnimationStarted by remember {
@@ -174,7 +112,7 @@ fun StatsContainer(modifier: Modifier = Modifier, name: String, value: Int) {
     }
     val animatedProgress by animateFloatAsState(
         targetValue = if (isAnimationStarted)
-         value.toFloat() / 255.0f else 0f,
+            value.toFloat() / 255.0f else 0f,
         animationSpec = tween(durationMillis = 1000)
     )
 
@@ -187,25 +125,24 @@ fun StatsContainer(modifier: Modifier = Modifier, name: String, value: Int) {
             .fillMaxWidth()
             .padding(all = 8.dp)
             .drawBehind {
-              drawRoundRect(
-                  color = Color.White,
-                  cornerRadius = CornerRadius(24.dp.toPx(), 24.dp.toPx())
-              )
+                // Empty white container
+                drawRoundRect(
+                    color = Color.White,
+                    cornerRadius = CornerRadius(24.dp.toPx(), 24.dp.toPx())
+                )
+
+                // Filled container with animation
+                drawRoundRect(
+                    color = Tools.statColor(name),
+                    cornerRadius = CornerRadius(24.dp.toPx(), 24.dp.toPx()),
+                    size = Size(
+                        width = size.width * animatedProgress,
+                        height = size.height
+                    )
+                )
             },
         contentAlignment = Alignment.Center
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(animatedProgress)
-                .size(width = 128.dp, height = 24.dp)
-                .clip(
-                    RoundedCornerShape(size = 24.dp)
-                )
-                .background(Tools.statColor(name))
-                .align(Alignment.CenterStart),
-        ) {
-            // ignore
-        }
         Text(
             modifier = Modifier
                 .fillMaxWidth(animatedProgress + 0.14f)
@@ -218,12 +155,6 @@ fun StatsContainer(modifier: Modifier = Modifier, name: String, value: Int) {
             style = MaterialTheme.typography.bodyMedium
         )
     }
-}
-
-@Preview
-@Composable
-fun StatsContainerPreview() {
-    StatsContainer(name = "hp", value = 255)
 }
 
 @Composable
@@ -240,6 +171,30 @@ fun TypeContainer(type: String) {
     ) {
         Text(text = type.replaceFirstChar { it.uppercase() }, color = Color.White)
     }
+}
+
+@Preview
+@Composable
+fun StatsContainerPreview() {
+    StatsContainer(name = "hp", value = 255)
+}
+
+@Preview
+@Composable
+fun PokemonInformationPreview() {
+    PokemonInformation(
+        Pokemon(
+            id = 1,
+            name = "Bulbasaur",
+            stats = mapOf(
+                "hp" to 12,
+                "attack" to 162,
+                "defense" to 221
+            ),
+            types = listOf("grass", "poison"),
+            sprite = ""
+        )
+    )
 }
 
 @Preview

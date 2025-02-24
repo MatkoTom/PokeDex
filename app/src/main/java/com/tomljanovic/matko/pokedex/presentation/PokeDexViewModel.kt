@@ -1,4 +1,4 @@
-package com.tomljanovic.matko.pokedex.presentation.pokemon_list
+package com.tomljanovic.matko.pokedex.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

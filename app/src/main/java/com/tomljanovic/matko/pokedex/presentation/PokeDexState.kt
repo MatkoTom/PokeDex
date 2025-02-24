@@ -1,4 +1,4 @@
-package com.tomljanovic.matko.pokedex.presentation.pokemon_list
+package com.tomljanovic.matko.pokedex.presentation
 
 import com.tomljanovic.matko.pokedex.domain.model.Pokemon
 

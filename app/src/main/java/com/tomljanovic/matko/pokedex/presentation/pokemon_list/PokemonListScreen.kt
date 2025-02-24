@@ -1,22 +1,14 @@
 package com.tomljanovic.matko.pokedex.presentation.pokemon_list
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,18 +17,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil3.compose.AsyncImage
 import com.tomljanovic.matko.pokedex.domain.model.Pokemon
+import com.tomljanovic.matko.pokedex.presentation.PokeDexViewModel
+import com.tomljanovic.matko.pokedex.presentation.components.cards.PokemonListCard
 import com.tomljanovic.matko.pokedex.util.Tools
-import timber.log.Timber
+
+const val INITIAL_LIST_LIMIT = 20
+const val NEXT_PAGE_LIMIT = 30
 
 @Composable
 fun PokemonListScreen(
@@ -45,7 +36,7 @@ fun PokemonListScreen(
     viewModel: PokeDexViewModel
 ) {
     LaunchedEffect(key1 = Unit) {
-        viewModel.getPokeDexEntries(20)
+        viewModel.getPokeDexEntries(numberOfPokemon = INITIAL_LIST_LIMIT)
     }
 
     val state by viewModel.pokeDexState.collectAsState()
@@ -80,8 +71,7 @@ fun PokedexGrid(
 
     if (endReached) {
         LaunchedEffect(key1 = Unit) {
-            Timber.d("Scroll end reached")
-            viewModel.getNextSetOfPokemon(limit = 30)
+            viewModel.getNextSetOfPokemon(limit = NEXT_PAGE_LIMIT)
         }
     }
     LazyVerticalGrid(
@@ -109,6 +99,25 @@ fun checkIfLastItemIsVisible(scrollState: LazyGridState): Boolean {
         }
     }
     return endReached
+}
+
+@Composable
+fun PokedexItem(
+    pokemon: Pokemon,
+    onPokemonClick: (Pokemon) -> Unit
+) {
+    val cardColours = if (pokemon.types.size == 1) {
+        listOf(Tools.typeColorList(pokemon.types)[0], Tools.typeColorList(pokemon.types)[0])
+    } else Tools.typeColorList(pokemon.types)
+
+    val capitalizedText = pokemon.name.replaceFirstChar { it.uppercase() }
+
+    PokemonListCard(
+        pokemon = pokemon,
+        cardColours = cardColours,
+        capitalizedText = capitalizedText,
+        onPokemonClick = onPokemonClick
+    )
 }
 
 @Preview
@@ -166,70 +175,5 @@ fun PokedexGridPreview() {
                 sprite = ""
             )
         )
-    )
-}
-
-@Composable
-fun PokedexItem(
-    pokemon: Pokemon,
-    onPokemonClick: (Pokemon) -> Unit
-) {
-    val cardColours = if (pokemon.types.size == 1) {
-        listOf(Tools.typeColorList(pokemon.types)[0], Tools.typeColorList(pokemon.types)[0])
-    } else Tools.typeColorList(pokemon.types)
-
-    val capitalizedText = pokemon.name.replaceFirstChar { it.uppercase() }
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(all = 4.dp)
-            .size(size = 156.dp),
-        shape = RoundedCornerShape(size = 8.dp),
-        onClick = { onPokemonClick(pokemon) }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = cardColours
-                    )
-                )
-                .padding(all = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            AsyncImage(
-                modifier = Modifier.weight(1f),
-                model = pokemon.sprite,
-                contentDescription = null,
-            )
-
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = capitalizedText,
-                color = Color.White,
-                textAlign = TextAlign.Center,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-                fontSize = 12.sp
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-fun PokedexItemPreview() {
-    PokedexItem(
-        Pokemon(
-            id = 1,
-            name = "Bulbasaur",
-            stats = emptyMap(),
-            types = listOf("grass", "poison"),
-            sprite = "https://raw.githubuserco…r/official-artwork/1.png"
-        ),
-        onPokemonClick = {}
     )
 }
