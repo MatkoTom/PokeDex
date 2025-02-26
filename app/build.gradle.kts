@@ -96,4 +96,5 @@ dependencies {
     // Coil - Image Loading
     implementation(libs.coil)
     implementation(libs.coil.networking)
+    implementation(libs.coil.gif)
 }

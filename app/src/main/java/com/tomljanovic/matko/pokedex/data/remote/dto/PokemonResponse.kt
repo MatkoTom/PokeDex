@@ -34,10 +34,11 @@ data class Sprites(
 
 data class OtherSprites(
     @SerializedName("official-artwork")
-    val officialArtwork: OfficialArtwork
+    val officialArtwork: Artwork,
+    val showdown: Artwork,
 )
 
-data class OfficialArtwork(
+data class Artwork(
     @SerializedName("front_default")
     val frontDefault: String
 )

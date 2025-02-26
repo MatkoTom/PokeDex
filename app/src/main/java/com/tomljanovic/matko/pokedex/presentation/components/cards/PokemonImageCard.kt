@@ -2,7 +2,6 @@ package com.tomljanovic.matko.pokedex.presentation.components.cards
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,31 +24,29 @@ fun PokemonImageCard(pokemon: Pokemon) {
         listOf(Tools.typeColorList(pokemon.types)[0], Tools.typeColorList(pokemon.types)[0])
     } else Tools.typeColorList(pokemon.types)
 
-    Column {
-        Card(
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .size(size = 256.dp)
+            .padding(bottom = 24.dp),
+        shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
+    ) {
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.CenterHorizontally)
-                .size(size = 256.dp)
-                .padding(bottom = 24.dp),
-            shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = cardColours
-                        )
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                AsyncImage(
-                    model = pokemon.sprite,
-                    contentDescription = null,
-                    modifier = Modifier.padding(bottom = 24.dp)
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = cardColours
+                    )
                 )
-            }
+                .padding(all = 32.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            AsyncImage(
+                modifier = Modifier.fillMaxSize(),
+                model = pokemon.animatedSprite,
+                contentDescription = null,
+            )
         }
     }
 }
@@ -63,7 +60,8 @@ fun PokemonImageCardPreview() {
             name = "Bulbasaur",
             stats = emptyMap(),
             types = listOf("grass", "poison"),
-            sprite = ""
+            sprite = "",
+            animatedSprite = ""
         )
     )
 }

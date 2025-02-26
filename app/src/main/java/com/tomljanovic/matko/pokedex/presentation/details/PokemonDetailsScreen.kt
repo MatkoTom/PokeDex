@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tomljanovic.matko.pokedex.R
 import com.tomljanovic.matko.pokedex.domain.model.Pokemon
 import com.tomljanovic.matko.pokedex.presentation.PokeDexViewModel
@@ -43,7 +44,7 @@ fun PokemonDetailsScreen(
     modifier: Modifier = Modifier,
     viewModel: PokeDexViewModel
 ) {
-    val state by viewModel.pokeDexState.collectAsState()
+    val state by viewModel.pokeDexState.collectAsStateWithLifecycle()
 
     state.pokemon?.let {
         Column {
@@ -192,7 +193,8 @@ fun PokemonInformationPreview() {
                 "defense" to 221
             ),
             types = listOf("grass", "poison"),
-            sprite = ""
+            sprite = "",
+            animatedSprite = ""
         )
     )
 }

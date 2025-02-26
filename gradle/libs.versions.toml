@@ -58,6 +58,7 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "fonts" }
 coil = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-networking = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
+coil-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

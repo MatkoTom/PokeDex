@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tomljanovic.matko.pokedex.domain.model.Pokemon
 import com.tomljanovic.matko.pokedex.presentation.PokeDexViewModel
 import com.tomljanovic.matko.pokedex.presentation.components.cards.PokemonListCard
@@ -39,7 +40,7 @@ fun PokemonListScreen(
         viewModel.getPokeDexEntries(numberOfPokemon = INITIAL_LIST_LIMIT)
     }
 
-    val state by viewModel.pokeDexState.collectAsState()
+    val state by viewModel.pokeDexState.collectAsStateWithLifecycle()
 
     Box(modifier = modifier.fillMaxSize()) {
         PokedexGrid(pokemon = state.pokemonList, onPokemonClick, viewModel)
@@ -130,49 +131,56 @@ fun PokedexGridPreview() {
                 name = "Bulbasaur",
                 stats = emptyMap(),
                 types = listOf("grass", "poison"),
-                sprite = ""
+                sprite = "",
+                animatedSprite = ""
             ),
             Pokemon(
                 id = 2,
                 name = "Ivysaur",
                 stats = emptyMap(),
                 types = listOf("grass", "poison"),
-                sprite = ""
+                sprite = "",
+                animatedSprite = ""
             ),
             Pokemon(
                 id = 3,
                 name = "Venusaur",
                 stats = emptyMap(),
                 types = listOf("grass", "poison"),
-                sprite = ""
+                sprite = "",
+                animatedSprite = ""
             ),
             Pokemon(
                 id = 4,
                 name = "Charmander",
                 stats = emptyMap(),
                 types = listOf("fire"),
-                sprite = ""
+                sprite = "",
+                animatedSprite = ""
             ),
             Pokemon(
                 id = 5,
                 name = "Charmeleon",
                 stats = emptyMap(),
                 types = listOf("fire"),
-                sprite = ""
+                sprite = "",
+                animatedSprite = ""
             ),
             Pokemon(
                 id = 6,
                 name = "Charizard",
                 stats = emptyMap(),
                 types = listOf("fire", "flying"),
-                sprite = ""
+                sprite = "",
+                animatedSprite = ""
             ),
             Pokemon(
                 id = 7,
                 name = "Squirtle",
                 stats = emptyMap(),
                 types = listOf("water"),
-                sprite = ""
+                sprite = "",
+                animatedSprite = ""
             )
         )
     )

@@ -78,7 +78,8 @@ fun PokedexListCardPreview() {
             name = "Bulbasaur",
             stats = emptyMap(),
             types = listOf("grass", "poison"),
-            sprite = "https://raw.githubuserco…r/official-artwork/1.png"
+            sprite = "https://raw.githubuserco…r/official-artwork/1.png",
+            animatedSprite = ""
         ),
         cardColours = listOf(Color.Green, Color.Cyan),
         capitalizedText = "Bulbasaur",

@@ -10,7 +10,8 @@ fun PokemonEntity.toPokemon(): Pokemon {
         name = name,
         stats = stats,
         types = types,
-        sprite = sprite
+        sprite = sprite,
+        animatedSprite = animatedSprite
     )
 }
 
@@ -23,6 +24,7 @@ fun PokemonResponse.toPokemonEntity(): PokemonEntity {
         name = name,
         stats = stats,
         types = types,
-        sprite = sprites.other.officialArtwork.frontDefault
+        sprite = sprites.other.officialArtwork.frontDefault,
+        animatedSprite = sprites.other.showdown.frontDefault
     )
 }
