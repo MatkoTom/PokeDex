@@ -1,24 +1,30 @@
 package com.tomljanovic.matko.pokedex.data.mappers
 
 import com.tomljanovic.matko.pokedex.data.local.PokemonEntity
-import com.tomljanovic.matko.pokedex.data.remote.dto.ResponseResults
+import com.tomljanovic.matko.pokedex.data.remote.dto.PokemonResponse
 import com.tomljanovic.matko.pokedex.domain.model.Pokemon
 
 fun PokemonEntity.toPokemon(): Pokemon {
     return Pokemon(
-        name = name
+        id = id,
+        name = name,
+        stats = stats,
+        types = types,
+        sprite = sprite,
+        animatedSprite = animatedSprite
     )
 }
 
-// TODO change this to mapp to local db entity
-fun ResponseResults.toPokemonEntity(): PokemonEntity {
+fun PokemonResponse.toPokemonEntity(): PokemonEntity {
+    val types = types.map { it.type.name }
+    val stats = stats.associate { it.stat.name to it.baseStat }
+
     return PokemonEntity(
-//        id = id,
+        id = id,
         name = name,
-//        order = order,
-//        weight = weight,
-//        sprites = sprites,
-//        stats = stats,
-//        types = types
+        stats = stats,
+        types = types,
+        sprite = sprites.other.officialArtwork.frontDefault,
+        animatedSprite = sprites.other.showdown.frontDefault
     )
 }

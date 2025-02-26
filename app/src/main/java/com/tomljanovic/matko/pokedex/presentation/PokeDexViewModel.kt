@@ -1,13 +1,15 @@
 package com.tomljanovic.matko.pokedex.presentation
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tomljanovic.matko.pokedex.domain.model.Pokemon
 import com.tomljanovic.matko.pokedex.domain.repository.PokeDexRepository
 import com.tomljanovic.matko.pokedex.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,31 +17,86 @@ import javax.inject.Inject
 class PokeDexViewModel @Inject constructor(
     private val repository: PokeDexRepository
 ) : ViewModel() {
-    var pokeDexState by mutableStateOf(PokeDexState())
+    private val _pokeDexState = MutableStateFlow(PokeDexState())
+    val pokeDexState: StateFlow<PokeDexState> = _pokeDexState.asStateFlow()
 
     fun getPokeDexEntries(
         numberOfPokemon: Int,
         fetchFromRemote: Boolean = false
     ) = viewModelScope.launch {
-        repository.getPokemon(numberOfPokemon, fetchFromRemote).collect { result ->
+        repository.getPokemonList(numberOfPokemon, fetchFromRemote).collect { result ->
             when (result) {
                 is Resource.Success -> {
-                    result.data?.let {
-                        pokeDexState = pokeDexState.copy(pokemon = it)
+                    result.data?.let { pokemonList ->
+                        _pokeDexState.update {
+                            it.copy(
+                                pokemonList = pokemonList
+                            )
+                        }
                     }
                 }
 
                 is Resource.Error -> {
-                    result.message?.let {
-                        pokeDexState = pokeDexState.copy(error = it)
+                    result.message?.let { error ->
+                        _pokeDexState.update {
+                            it.copy(
+                                error = error
+                            )
+                        }
                     }
                 }
 
                 is Resource.Loading -> {
-                    pokeDexState =
-                        pokeDexState.copy(isLoading = result.isLoading)
+                    _pokeDexState.update {
+                        it.copy(
+                            isLoading = result.isLoading
+                        )
+                    }
                 }
             }
+        }
+    }
+
+    fun getNextSetOfPokemon(limit: Int) = viewModelScope.launch {
+        repository.getNextPage(limit).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    result.data?.let { pokemonList ->
+                        _pokeDexState.update {
+                            it.copy(
+                                pokemonList = pokemonList
+                            )
+                        }
+                    }
+                }
+
+                is Resource.Error -> {
+                    result.message?.let { error ->
+                        _pokeDexState.update {
+                            it.copy(
+                                error = error
+                            )
+                        }
+                    }
+                }
+
+                is Resource.Loading -> {
+                    _pokeDexState.update {
+                        it.copy(
+                            isLoading = result.isLoading
+                        )
+                    }
+                }
+            }
+
+        }
+    }
+
+    fun updatePokemonSelected(pokemon: Pokemon) {
+        _pokeDexState.update {
+            it.copy(
+                pokemon = pokemon
+            )
         }
     }
 }

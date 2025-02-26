@@ -15,8 +15,8 @@ android {
         applicationId = "com.tomljanovic.matko.pokedex"
         minSdk = 31
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 100001
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -65,9 +65,8 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.accompanist.swiperefresh)
 
-    // Compose Nav Destinations
-    implementation(libs.core)
-    ksp(libs.ksp)
+    // Compose Navigation
+    implementation(libs.androidx.navigation.compose)
 
     //Dagger - Hilt
     implementation(libs.hilt.android)
@@ -93,4 +92,9 @@ dependencies {
 
     // Fonts
     implementation(libs.fonts)
+
+    // Coil - Image Loading
+    implementation(libs.coil)
+    implementation(libs.coil.networking)
+    implementation(libs.coil.gif)
 }
