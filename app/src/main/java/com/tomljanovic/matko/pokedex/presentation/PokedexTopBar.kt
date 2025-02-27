@@ -13,7 +13,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.tomljanovic.matko.pokedex.R
-import com.tomljanovic.matko.pokedex.TopAppBarState
+
+data class TopAppBarState(
+    val title: String = "",
+    val navigationIcon: (@Composable () -> Unit)? = null,
+    val pokemonBackground: Color = Color.Transparent,
+    val actions: (@Composable () -> Unit)? = null,
+    val showLogo: Boolean = true
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

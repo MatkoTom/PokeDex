@@ -38,12 +38,12 @@ fun PokemonImageCard(pokemon: Pokemon) {
                     brush = Brush.verticalGradient(
                         colors = cardColours
                     )
-                )
-                .padding(all = 32.dp),
+                ),
             contentAlignment = Alignment.Center
         ) {
             AsyncImage(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize()
+                    .padding(all = 32.dp),
                 model = pokemon.animatedSprite,
                 contentDescription = null,
             )

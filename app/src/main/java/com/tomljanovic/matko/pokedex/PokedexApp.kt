@@ -1,6 +1,8 @@
 package com.tomljanovic.matko.pokedex
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeContent
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -22,6 +24,7 @@ import com.tomljanovic.matko.pokedex.navigation.PokedexNavHost
 import com.tomljanovic.matko.pokedex.navigation.PokedexNavigationActions
 import com.tomljanovic.matko.pokedex.presentation.PokeDexViewModel
 import com.tomljanovic.matko.pokedex.presentation.PokedexTopBar
+import com.tomljanovic.matko.pokedex.presentation.TopAppBarState
 import com.tomljanovic.matko.pokedex.ui.theme.PokeDexTheme
 
 @Composable
@@ -67,6 +70,7 @@ fun PokedexApp() {
         }
 
         Scaffold(
+            contentWindowInsets = WindowInsets.safeContent,
             topBar = {
                 PokedexTopBar(
                     topAppBarState = topAppBarState

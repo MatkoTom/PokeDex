@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.tomljanovic.matko.pokedex.TopAppBarState
+import com.tomljanovic.matko.pokedex.presentation.TopAppBarState
 import com.tomljanovic.matko.pokedex.presentation.PokeDexViewModel
 import com.tomljanovic.matko.pokedex.presentation.details.PokemonDetailsScreen
 import com.tomljanovic.matko.pokedex.presentation.pokemon_list.PokemonListScreen

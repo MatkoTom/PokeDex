@@ -8,14 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import dagger.hilt.android.AndroidEntryPoint
 
-data class TopAppBarState(
-    val title: String = "",
-    val navigationIcon: (@Composable () -> Unit)? = null,
-    val pokemonBackground: Color = Color.Transparent,
-    val actions: (@Composable () -> Unit)? = null,
-    val showLogo: Boolean = true
-)
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
