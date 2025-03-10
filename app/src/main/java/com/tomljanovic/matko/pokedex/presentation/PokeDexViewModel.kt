@@ -1,5 +1,6 @@
 package com.tomljanovic.matko.pokedex.presentation
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tomljanovic.matko.pokedex.domain.model.Pokemon
@@ -19,6 +20,9 @@ class PokeDexViewModel @Inject constructor(
 ) : ViewModel() {
     private val _pokeDexState = MutableStateFlow(PokeDexState())
     val pokeDexState: StateFlow<PokeDexState> = _pokeDexState.asStateFlow()
+
+    private val _searchQuery = mutableStateOf("")
+    val searchQuery = _searchQuery
 
     fun getPokeDexEntries(
         numberOfPokemon: Int,
@@ -98,5 +102,9 @@ class PokeDexViewModel @Inject constructor(
                 pokemon = pokemon
             )
         }
+    }
+
+    fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
     }
 }

@@ -24,6 +24,7 @@ import com.tomljanovic.matko.pokedex.navigation.PokedexNavHost
 import com.tomljanovic.matko.pokedex.navigation.PokedexNavigationActions
 import com.tomljanovic.matko.pokedex.presentation.PokeDexViewModel
 import com.tomljanovic.matko.pokedex.presentation.PokedexTopBar
+import com.tomljanovic.matko.pokedex.presentation.SearchBarState
 import com.tomljanovic.matko.pokedex.presentation.TopAppBarState
 import com.tomljanovic.matko.pokedex.ui.theme.PokeDexTheme
 
@@ -42,7 +43,10 @@ fun PokedexApp() {
         topAppBarState = when (currentRoute) {
             PokedexDestinations.Home.name -> {
                 TopAppBarState(
-                    showLogo = true
+                    showLogo = true,
+                    onSearchClick = {
+                        topAppBarState = topAppBarState.copy(showSearchBar = SearchBarState.OPEN)
+                    }
                 )
             }
 
@@ -62,7 +66,8 @@ fun PokedexApp() {
                             )
                         }
                     },
-                    showLogo = false
+                    showLogo = false,
+                    showSearchBar = SearchBarState.REMOVED
                 )
             }
 
@@ -73,7 +78,11 @@ fun PokedexApp() {
             contentWindowInsets = WindowInsets.safeContent,
             topBar = {
                 PokedexTopBar(
-                    topAppBarState = topAppBarState
+                    topAppBarState = topAppBarState,
+                    searchValue = viewModel.searchQuery.value,
+                    onSearchValueChange = {
+                        viewModel.updateSearchQuery(it)
+                    }
                 )
             },
             modifier = Modifier

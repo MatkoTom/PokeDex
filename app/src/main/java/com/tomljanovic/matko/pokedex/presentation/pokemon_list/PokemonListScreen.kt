@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -26,6 +25,7 @@ import com.tomljanovic.matko.pokedex.domain.model.Pokemon
 import com.tomljanovic.matko.pokedex.presentation.PokeDexViewModel
 import com.tomljanovic.matko.pokedex.presentation.components.cards.PokemonListCard
 import com.tomljanovic.matko.pokedex.util.Tools
+import timber.log.Timber
 
 const val INITIAL_LIST_LIMIT = 20
 const val NEXT_PAGE_LIMIT = 30
@@ -41,9 +41,14 @@ fun PokemonListScreen(
     }
 
     val state by viewModel.pokeDexState.collectAsStateWithLifecycle()
+    val searchQuery by viewModel.searchQuery
+
+    if (searchQuery.isNotEmpty()) {
+        Timber.d("Search query = $searchQuery")
+    }
 
     Box(modifier = modifier.fillMaxSize()) {
-        PokedexGrid(pokemon = state.pokemonList, onPokemonClick, viewModel)
+        PokedexGrid(pokemon = state.pokemonList, onPokemonClick, searchQuery = searchQuery)
 
         if (state.isLoading) {
             Box(
@@ -65,21 +70,32 @@ fun PokemonListScreen(
 fun PokedexGrid(
     pokemon: List<Pokemon>,
     onPokemonClick: (Pokemon) -> Unit = {},
-    viewModel: PokeDexViewModel = hiltViewModel()
+    viewModel: PokeDexViewModel = hiltViewModel(),
+    searchQuery: String = ""
 ) {
     val scrollState = rememberLazyGridState()
     val endReached = checkIfLastItemIsVisible(scrollState)
 
     if (endReached) {
         LaunchedEffect(key1 = Unit) {
-            viewModel.getNextSetOfPokemon(limit = NEXT_PAGE_LIMIT)
+            // TODO Fix this so API isn't called every time the list gets filtered.
+            if (viewModel.searchQuery.value.isEmpty()) {
+//                viewModel.getNextSetOfPokemon(limit = NEXT_PAGE_LIMIT)
+            }
+        }
+    }
+
+    var pokeItems = pokemon
+    if (searchQuery.isNotEmpty()) {
+        pokeItems = pokeItems.filter {
+            it.name.contains(searchQuery)
         }
     }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 128.dp),
         state = scrollState
     ) {
-        items(pokemon) { poke ->
+        items(pokeItems) { poke ->
             PokedexItem(
                 poke,
                 onPokemonClick = onPokemonClick

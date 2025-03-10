@@ -12,8 +12,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.tomljanovic.matko.pokedex.presentation.TopAppBarState
 import com.tomljanovic.matko.pokedex.presentation.PokeDexViewModel
+import com.tomljanovic.matko.pokedex.presentation.TopAppBarState
 import com.tomljanovic.matko.pokedex.presentation.details.PokemonDetailsScreen
 import com.tomljanovic.matko.pokedex.presentation.pokemon_list.PokemonListScreen
 import com.tomljanovic.matko.pokedex.util.Tools
@@ -45,10 +45,12 @@ fun PokedexNavHost(
                                     color = Color.White,
                                     style = MaterialTheme.typography.titleLarge
                                 )
-                            })
+                            }
+                        )
                     )
                     viewModel.updatePokemonSelected(it)
                     PokedexNavigationActions(navController).navigateToDetails()
+                    viewModel.updateSearchQuery("")
                 },
                 viewModel = viewModel
             )
