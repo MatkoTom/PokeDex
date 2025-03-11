@@ -25,7 +25,6 @@ import com.tomljanovic.matko.pokedex.domain.model.Pokemon
 import com.tomljanovic.matko.pokedex.presentation.PokeDexViewModel
 import com.tomljanovic.matko.pokedex.presentation.components.cards.PokemonListCard
 import com.tomljanovic.matko.pokedex.util.Tools
-import timber.log.Timber
 
 const val INITIAL_LIST_LIMIT = 20
 const val NEXT_PAGE_LIMIT = 30
@@ -43,12 +42,13 @@ fun PokemonListScreen(
     val state by viewModel.pokeDexState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery
 
-    if (searchQuery.isNotEmpty()) {
-        Timber.d("Search query = $searchQuery")
-    }
-
     Box(modifier = modifier.fillMaxSize()) {
-        PokedexGrid(pokemon = state.pokemonList, onPokemonClick, searchQuery = searchQuery)
+        PokedexGrid(
+            pokemon = state.pokemonList,
+            onPokemonClick = onPokemonClick,
+            viewModel = viewModel,
+            searchQuery = searchQuery
+        )
 
         if (state.isLoading) {
             Box(
