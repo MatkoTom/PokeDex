@@ -3,4 +3,5 @@
     <string name="details">Details</string>
     <string name="back">Back</string>
     <string name="base_stats">Base stats</string>
+    <string name="search_hint">Id or full name</string>
 </resources>

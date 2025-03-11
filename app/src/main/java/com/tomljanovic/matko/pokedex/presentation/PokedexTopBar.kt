@@ -84,7 +84,7 @@ fun PokedexTopBar(
                         onSearchValueChange(it)
                     },
                     placeholder = {
-                        Text(text = "Id or full name", fontSize = 14.sp)
+                        Text(text = stringResource(R.string.search_hint), fontSize = 14.sp)
                     },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
