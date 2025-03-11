@@ -78,9 +78,8 @@ fun PokedexGrid(
 
     if (endReached) {
         LaunchedEffect(key1 = Unit) {
-            // TODO Fix this so API isn't called every time the list gets filtered.
-            if (viewModel.searchQuery.value.isEmpty()) {
-//                viewModel.getNextSetOfPokemon(limit = NEXT_PAGE_LIMIT)
+            if (searchQuery.isEmpty()) {
+                viewModel.getNextSetOfPokemon(limit = NEXT_PAGE_LIMIT)
             }
         }
     }
