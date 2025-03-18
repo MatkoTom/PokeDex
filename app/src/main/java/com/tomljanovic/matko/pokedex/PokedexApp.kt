@@ -16,6 +16,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.toLowerCase
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -82,6 +84,9 @@ fun PokedexApp() {
                     searchValue = viewModel.searchQuery.value,
                     onSearchValueChange = {
                         viewModel.updateSearchQuery(it)
+                    },
+                    onSearchClick = {
+                        viewModel.searchForPokemon(it.toLowerCase(Locale.current))
                     }
                 )
             },

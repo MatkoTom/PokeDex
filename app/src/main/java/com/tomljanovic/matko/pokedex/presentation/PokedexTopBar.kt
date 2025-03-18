@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -52,7 +53,8 @@ enum class SearchBarState {
 fun PokedexTopBar(
     topAppBarState: TopAppBarState,
     searchValue: String,
-    onSearchValueChange: (String) -> Unit
+    onSearchValueChange: (String) -> Unit,
+    onSearchClick: (String) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
     TopAppBar(
@@ -98,6 +100,11 @@ fun PokedexTopBar(
                         focusedPlaceholderColor = Color.White,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onSearch = {
+                            onSearchClick(searchValue)
+                        }
                     )
                 )
                 LaunchedEffect(Unit) {

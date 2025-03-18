@@ -96,6 +96,40 @@ class PokeDexViewModel @Inject constructor(
         }
     }
 
+    fun searchForPokemon(nameOrId: String) = viewModelScope.launch {
+        repository.searchForPokemon(nameOrId).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    result.data?.let { pokemon ->
+                        _pokeDexState.update {
+                            it.copy(
+                                pokemonList = pokemon
+                            )
+                        }
+                    }
+                }
+
+                is Resource.Error -> {
+                    result.message?.let { error ->
+                        _pokeDexState.update {
+                            it.copy(
+                                error = error
+                            )
+                        }
+                    }
+                }
+
+                is Resource.Loading -> {
+                    _pokeDexState.update {
+                        it.copy(
+                            isLoading = result.isLoading
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     fun updatePokemonSelected(pokemon: Pokemon) {
         _pokeDexState.update {
             it.copy(

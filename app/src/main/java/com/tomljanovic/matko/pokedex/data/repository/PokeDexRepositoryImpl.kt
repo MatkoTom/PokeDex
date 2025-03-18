@@ -88,6 +88,39 @@ class PokeDexRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun searchForPokemon(nameOrId: String): Flow<Resource<List<Pokemon>>> {
+        return flow {
+            emit(Resource.Loading(isLoading = true))
+
+            val localPokemon = pokedexDao.getLocalPokemon(nameOrId)
+
+            val isDbEmpty = localPokemon == null
+            val shouldLoadFromCache = !isDbEmpty
+            if (shouldLoadFromCache) {
+                emit(Resource.Loading(isLoading = false))
+                return@flow
+            }
+
+            val remotePokemon = try {
+                pokeDexApi.getPokemonById(nameOrId)
+            } catch (e: HttpException) {
+                Timber.e("Fetch error: ${e.message}")
+                emit(Resource.Error(message = "Unable to load data remote"))
+                null
+            } catch (e: IOException) {
+                Timber.e("Fetch error local: ${e.message}")
+                emit(Resource.Error(message = "Unable to load data local"))
+                null
+            }
+
+            remotePokemon?.let { pokemon ->
+                pokedexDao.insertPokemon(pokemon.toPokemonEntity())
+                emit(Resource.Success(data = pokedexDao.getLocalPokemon().map { it.toPokemon() }))
+            }
+            emit(Resource.Loading(isLoading = false))
+        }
+    }
+
     private suspend fun getSpecificPokemon(name: String) {
         val remotePokemon = try {
             pokeDexApi.getPokemonById(name)
