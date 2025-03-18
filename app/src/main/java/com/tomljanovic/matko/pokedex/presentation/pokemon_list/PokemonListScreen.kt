@@ -84,7 +84,7 @@ fun PokedexGrid(
     var pokeItems = pokemon
     if (searchQuery.isNotEmpty()) {
         pokeItems = pokeItems.filter {
-            it.name.contains(searchQuery)
+            it.name.contains(searchQuery) || it.id.toString() == searchQuery
         }
     }
     LazyVerticalGrid(
