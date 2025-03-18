@@ -1,5 +1,7 @@
 package com.tomljanovic.matko.pokedex.data.repository
 
+import android.app.Application
+import com.tomljanovic.matko.pokedex.R
 import com.tomljanovic.matko.pokedex.data.local.PokedexDatabase
 import com.tomljanovic.matko.pokedex.data.mappers.toPokemon
 import com.tomljanovic.matko.pokedex.data.mappers.toPokemonEntity
@@ -21,6 +23,7 @@ import javax.inject.Singleton
 
 @Singleton
 class PokeDexRepositoryImpl @Inject constructor(
+    private val context: Application,
     private val pokeDexApi: PokeDexApi,
     pokedexDb: PokedexDatabase
 ) : PokeDexRepository {
@@ -44,11 +47,11 @@ class PokeDexRepositoryImpl @Inject constructor(
                 pokeDexApi.getListOfPokemon(limit).results
             } catch (e: HttpException) {
                 Timber.e("Fetch error: ${e.message}")
-                emit(Resource.Error(message = "Unable to load data remote"))
+                emit(Resource.Error(message = context.getString(R.string.unable_to_load_data_remote)))
                 null
             } catch (e: IOException) {
                 Timber.e("Fetch error local: ${e.message}")
-                emit(Resource.Error(message = "Unable to load data local"))
+                emit(Resource.Error(message = context.getString(R.string.unable_to_load_data_local)))
                 null
             }
 
@@ -105,11 +108,11 @@ class PokeDexRepositoryImpl @Inject constructor(
                 pokeDexApi.getPokemonById(nameOrId)
             } catch (e: HttpException) {
                 Timber.e("Fetch error: ${e.message}")
-                emit(Resource.Error(message = "Unable to load data remote"))
+                emit(Resource.Error(message = context.getString(R.string.unable_to_find_pokemon)))
                 null
             } catch (e: IOException) {
                 Timber.e("Fetch error local: ${e.message}")
-                emit(Resource.Error(message = "Unable to load data local"))
+                emit(Resource.Error(message = context.getString(R.string.unable_to_load_data_local)))
                 null
             }
 

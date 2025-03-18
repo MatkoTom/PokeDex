@@ -141,4 +141,12 @@ class PokeDexViewModel @Inject constructor(
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
     }
+
+    fun dismissPopup() {
+        _pokeDexState.update {
+            it.copy(
+                error = ""
+            )
+        }
+    }
 }

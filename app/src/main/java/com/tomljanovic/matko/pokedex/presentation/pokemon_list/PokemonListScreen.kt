@@ -1,6 +1,5 @@
 package com.tomljanovic.matko.pokedex.presentation.pokemon_list
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -8,15 +7,12 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -24,6 +20,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tomljanovic.matko.pokedex.domain.model.Pokemon
 import com.tomljanovic.matko.pokedex.presentation.PokeDexViewModel
 import com.tomljanovic.matko.pokedex.presentation.components.cards.PokemonListCard
+import com.tomljanovic.matko.pokedex.presentation.components.utils.ErrorPopup
+import com.tomljanovic.matko.pokedex.presentation.components.utils.LoadingOverlay
 import com.tomljanovic.matko.pokedex.util.Tools
 
 const val INITIAL_LIST_LIMIT = 20
@@ -51,17 +49,16 @@ fun PokemonListScreen(
         )
 
         if (state.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color.Black.copy(alpha = 0.3f)),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    color = Color.White,
-                    strokeWidth = 4.dp
-                )
-            }
+            LoadingOverlay()
+        }
+
+        if (state.error.isNotEmpty()) {
+            ErrorPopup(
+                errorText = state.error,
+                onDismiss = {
+                    viewModel.dismissPopup()
+                }
+            )
         }
     }
 }

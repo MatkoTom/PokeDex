@@ -4,4 +4,7 @@
     <string name="back">Back</string>
     <string name="base_stats">Base stats</string>
     <string name="search_hint">Id or full name</string>
+    <string name="unable_to_load_data_remote">Unable to load data remote</string>
+    <string name="unable_to_load_data_local">Unable to load data local</string>
+    <string name="unable_to_find_pokemon">Unable to find Pokemon. Please check that you have entered the correct full name or ID</string>
 </resources>
