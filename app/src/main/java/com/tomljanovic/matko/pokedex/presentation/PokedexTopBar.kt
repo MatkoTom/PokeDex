@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tomljanovic.matko.pokedex.R
+import com.tomljanovic.matko.pokedex.util.Tools.removeLeadingZeros
 
 data class TopAppBarState(
     val title: String = "",
@@ -83,7 +84,10 @@ fun PokedexTopBar(
                         .focusRequester(focusRequester),
                     value = searchValue,
                     onValueChange = {
-                        onSearchValueChange(it)
+                        val formattedText = removeLeadingZeros(it)
+
+                        if (formattedText != "0")
+                            onSearchValueChange(formattedText)
                     },
                     placeholder = {
                         Text(text = stringResource(R.string.search_hint), fontSize = 14.sp)
