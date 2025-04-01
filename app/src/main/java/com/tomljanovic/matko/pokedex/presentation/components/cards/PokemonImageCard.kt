@@ -42,9 +42,10 @@ fun PokemonImageCard(pokemon: Pokemon) {
             contentAlignment = Alignment.Center
         ) {
             AsyncImage(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .padding(all = 32.dp),
-                model = pokemon.animatedSprite,
+                model = pokemon.animatedSprite.ifEmpty { pokemon.sprite },
                 contentDescription = null,
             )
         }

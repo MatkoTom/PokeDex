@@ -11,7 +11,7 @@ fun PokemonEntity.toPokemon(): Pokemon {
         stats = stats,
         types = types,
         sprite = sprite,
-        animatedSprite = animatedSprite.toString()
+        animatedSprite = animatedSprite ?: ""
     )
 }
 
