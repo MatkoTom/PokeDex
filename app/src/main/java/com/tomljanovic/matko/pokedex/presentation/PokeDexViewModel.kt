@@ -1,5 +1,6 @@
 package com.tomljanovic.matko.pokedex.presentation
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tomljanovic.matko.pokedex.domain.model.Pokemon
@@ -19,6 +20,9 @@ class PokeDexViewModel @Inject constructor(
 ) : ViewModel() {
     private val _pokeDexState = MutableStateFlow(PokeDexState())
     val pokeDexState: StateFlow<PokeDexState> = _pokeDexState.asStateFlow()
+
+    private val _searchQuery = mutableStateOf("")
+    val searchQuery = _searchQuery
 
     fun getPokeDexEntries(
         numberOfPokemon: Int,
@@ -92,10 +96,56 @@ class PokeDexViewModel @Inject constructor(
         }
     }
 
+    fun searchForPokemon(nameOrId: String) = viewModelScope.launch {
+        repository.searchForPokemon(nameOrId).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    result.data?.let { pokemon ->
+                        _pokeDexState.update {
+                            it.copy(
+                                pokemonList = pokemon
+                            )
+                        }
+                    }
+                }
+
+                is Resource.Error -> {
+                    result.message?.let { error ->
+                        _pokeDexState.update {
+                            it.copy(
+                                error = error
+                            )
+                        }
+                    }
+                }
+
+                is Resource.Loading -> {
+                    _pokeDexState.update {
+                        it.copy(
+                            isLoading = result.isLoading
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     fun updatePokemonSelected(pokemon: Pokemon) {
         _pokeDexState.update {
             it.copy(
                 pokemon = pokemon
+            )
+        }
+    }
+
+    fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
+
+    fun dismissPopup() {
+        _pokeDexState.update {
+            it.copy(
+                error = ""
             )
         }
     }

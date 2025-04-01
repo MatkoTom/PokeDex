@@ -63,4 +63,13 @@ object Tools {
     fun formatNumber(number: Int): String {
         return String.format("#%03d", number)
     }
+
+    fun removeLeadingZeros(input: String): String {
+        if (input.isEmpty()) {
+            return ""
+        }
+
+        val trimmed = input.trimStart('0')
+        return trimmed.ifEmpty { "0" }
+    }
 }

@@ -16,6 +16,9 @@ interface PokemonDao {
     @Query("SELECT * FROM pokemonentity")
     suspend fun getLocalPokemon(): List<PokemonEntity>
 
+    @Query("SELECT * FROM pokemonentity WHERE id = :nameOrId OR name = :nameOrId")
+    suspend fun getLocalPokemon(nameOrId: String): PokemonEntity?
+
     @Query("DELETE FROM pokemonentity WHERE id = :id")
     suspend fun deletePokemon(id: Int)
 

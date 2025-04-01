@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,6 +17,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.toLowerCase
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -24,6 +27,7 @@ import com.tomljanovic.matko.pokedex.navigation.PokedexNavHost
 import com.tomljanovic.matko.pokedex.navigation.PokedexNavigationActions
 import com.tomljanovic.matko.pokedex.presentation.PokeDexViewModel
 import com.tomljanovic.matko.pokedex.presentation.PokedexTopBar
+import com.tomljanovic.matko.pokedex.presentation.SearchBarState
 import com.tomljanovic.matko.pokedex.presentation.TopAppBarState
 import com.tomljanovic.matko.pokedex.ui.theme.PokeDexTheme
 
@@ -42,7 +46,10 @@ fun PokedexApp() {
         topAppBarState = when (currentRoute) {
             PokedexDestinations.Home.name -> {
                 TopAppBarState(
-                    showLogo = true
+                    showLogo = true,
+                    onSearchClick = {
+                        topAppBarState = topAppBarState.copy(showSearchBar = SearchBarState.OPEN)
+                    }
                 )
             }
 
@@ -56,13 +63,14 @@ fun PokedexApp() {
                             }
                         ) {
                             Icon(
-                                tint = Color.White,
+                                tint = MaterialTheme.colorScheme.primaryContainer,
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = stringResource(R.string.back)
                             )
                         }
                     },
-                    showLogo = false
+                    showLogo = false,
+                    showSearchBar = SearchBarState.REMOVED
                 )
             }
 
@@ -73,7 +81,14 @@ fun PokedexApp() {
             contentWindowInsets = WindowInsets.safeContent,
             topBar = {
                 PokedexTopBar(
-                    topAppBarState = topAppBarState
+                    topAppBarState = topAppBarState,
+                    searchValue = viewModel.searchQuery.value,
+                    onSearchValueChange = {
+                        viewModel.updateSearchQuery(it)
+                    },
+                    onSearchClick = { idOrName ->
+                        viewModel.searchForPokemon(idOrName.toLowerCase(Locale.current))
+                    }
                 )
             },
             modifier = Modifier

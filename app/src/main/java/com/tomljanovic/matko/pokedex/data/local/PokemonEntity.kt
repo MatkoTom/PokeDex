@@ -14,5 +14,5 @@ data class PokemonEntity(
     val stats: Map<String, Int>,
     val types: List<String>,
     val sprite: String,
-    val animatedSprite: String
+    val animatedSprite: String? = ""
 )
