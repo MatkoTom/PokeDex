@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -31,6 +32,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tomljanovic.matko.pokedex.R
+import com.tomljanovic.matko.pokedex.presentation.components.utils.PokedexSearch
 import com.tomljanovic.matko.pokedex.util.Tools.removeLeadingZeros
 
 data class TopAppBarState(
@@ -69,64 +71,46 @@ fun PokedexTopBar(
                 )
             } else {
                 Text(
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     text = topAppBarState.title
                 )
             }
         },
         navigationIcon = { topAppBarState.navigationIcon?.invoke() },
         actions = {
-            if (SearchBarState.OPEN == topAppBarState.showSearchBar) {
-                TextField(
-                    modifier = Modifier
-                        .widthIn(max = 200.dp)
-                        .padding(all = 8.dp)
-                        .focusRequester(focusRequester),
-                    value = searchValue,
-                    onValueChange = {
-                        val formattedText = removeLeadingZeros(it)
-
-                        if (formattedText != "0")
-                            onSearchValueChange(formattedText)
-                    },
-                    placeholder = {
-                        Text(text = stringResource(R.string.search_hint), fontSize = 14.sp)
-                    },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Search
-                    ),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedTextColor = Color.White,
-                        focusedPlaceholderColor = Color.White,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onSearch = {
+            when (topAppBarState.showSearchBar) {
+                SearchBarState.OPEN -> {
+                    PokedexSearch(
+                        searchValue = searchValue,
+                        onSearchValueChange = {
+                           onSearchValueChange(it)
+                        },
+                        onSearchClick = {
                             onSearchClick(searchValue)
-                        }
+                        },
+                        focusRequester = focusRequester
                     )
-                )
-                LaunchedEffect(Unit) {
-                    focusRequester.requestFocus()
+                    LaunchedEffect(Unit) {
+                        focusRequester.requestFocus()
+                    }
                 }
-            } else if (SearchBarState.CLOSED == topAppBarState.showSearchBar) {
-                IconButton(onClick = {
-                    topAppBarState.onSearchClick()
-                }) {
-                    Icon(
-                        tint = Color.White,
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = stringResource(R.string.back)
-                    )
+
+                SearchBarState.CLOSED -> {
+                    IconButton(onClick = {
+                        topAppBarState.onSearchClick()
+                    }) {
+                        Icon(
+                            tint = MaterialTheme.colorScheme.primaryContainer,
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = stringResource(R.string.back)
+                        )
+                    }
+                    topAppBarState.actions?.invoke()
                 }
-                topAppBarState.actions?.invoke()
-            } else {
-                topAppBarState.actions?.invoke()
+
+                else -> {
+                    topAppBarState.actions?.invoke()
+                }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(

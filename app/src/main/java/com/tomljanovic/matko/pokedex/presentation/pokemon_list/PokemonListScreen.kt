@@ -20,7 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.tomljanovic.matko.pokedex.domain.model.Pokemon
 import com.tomljanovic.matko.pokedex.presentation.PokeDexViewModel
 import com.tomljanovic.matko.pokedex.presentation.components.cards.PokemonListCard
-import com.tomljanovic.matko.pokedex.presentation.components.utils.ErrorPopup
+import com.tomljanovic.matko.pokedex.presentation.components.utils.PokedexErrorPopup
 import com.tomljanovic.matko.pokedex.presentation.components.utils.LoadingOverlay
 import com.tomljanovic.matko.pokedex.util.Tools
 
@@ -53,7 +53,7 @@ fun PokemonListScreen(
         }
 
         if (state.error.isNotEmpty()) {
-            ErrorPopup(
+            PokedexErrorPopup(
                 errorText = state.error,
                 onDismiss = {
                     viewModel.dismissPopup()

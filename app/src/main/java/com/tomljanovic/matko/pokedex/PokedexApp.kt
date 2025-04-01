@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -62,7 +63,7 @@ fun PokedexApp() {
                             }
                         ) {
                             Icon(
-                                tint = Color.White,
+                                tint = MaterialTheme.colorScheme.primaryContainer,
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = stringResource(R.string.back)
                             )
@@ -85,8 +86,8 @@ fun PokedexApp() {
                     onSearchValueChange = {
                         viewModel.updateSearchQuery(it)
                     },
-                    onSearchClick = {
-                        viewModel.searchForPokemon(it.toLowerCase(Locale.current))
+                    onSearchClick = { idOrName ->
+                        viewModel.searchForPokemon(idOrName.toLowerCase(Locale.current))
                     }
                 )
             },

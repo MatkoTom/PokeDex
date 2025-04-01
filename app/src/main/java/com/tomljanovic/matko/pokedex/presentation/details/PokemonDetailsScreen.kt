@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -63,7 +64,7 @@ fun PokemonInformation(pokemon: Pokemon) {
     ) {
         Text(
             pokemon.name.replaceFirstChar { it.uppercase() },
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onPrimary,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.titleLarge
         )
@@ -76,7 +77,7 @@ fun PokemonInformation(pokemon: Pokemon) {
 
         Text(
             text = stringResource(R.string.base_stats),
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onPrimary,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.titleMedium
         )
@@ -91,7 +92,7 @@ fun PokemonInformation(pokemon: Pokemon) {
                         modifier = Modifier.weight(1f),
                         text = Tools.statName(name).uppercase(),
                         fontWeight = FontWeight.Bold,
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         style = MaterialTheme.typography.bodyMedium
                     )
                     StatsContainer(
@@ -120,6 +121,7 @@ fun StatsContainer(modifier: Modifier = Modifier, name: String, value: Int) {
         isAnimationStarted = true
     }
 
+    val containerColor = MaterialTheme.colorScheme.primaryContainer
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -127,7 +129,7 @@ fun StatsContainer(modifier: Modifier = Modifier, name: String, value: Int) {
             .drawBehind {
                 // Empty white container
                 drawRoundRect(
-                    color = Color.White,
+                    color = containerColor,
                     cornerRadius = CornerRadius(24.dp.toPx(), 24.dp.toPx())
                 )
 
@@ -150,7 +152,7 @@ fun StatsContainer(modifier: Modifier = Modifier, name: String, value: Int) {
                 .align(Alignment.CenterStart),
             textAlign = TextAlign.End,
             text = value.toString(),
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.onSecondary,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.bodyMedium
         )
@@ -169,7 +171,7 @@ fun TypeContainer(type: String) {
             .background(Tools.typeColor(type)),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = type.replaceFirstChar { it.uppercase() }, color = Color.White)
+        Text(text = type.replaceFirstChar { it.uppercase() }, color = MaterialTheme.colorScheme.onPrimary)
     }
 }
 
